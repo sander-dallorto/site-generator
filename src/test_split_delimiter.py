@@ -33,14 +33,11 @@ class TestSplitDelimiter(unittest.TestCase):
         )
 
     def test_unmatched_delimiters(self):
-        # Create a TextNode with mismatched delimiters (e.g., ** and `)
         node = TextNode("This is a **mismatched` delimiter example", TextType.TEXT)
         
-        # Call the split_nodes_delimiter function and check if it raises an exception
         with self.assertRaises(Exception) as context:
             split_nodes_delimiter([node], "**", TextType.BOLD)
         
-        # Verify that the exception message is correct
         self.assertTrue("Delimiters don't match" in str(context.exception))
 
 if __name__ == "__main__":

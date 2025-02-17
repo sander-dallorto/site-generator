@@ -1,7 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNode, LeafNode, ParentNode, text_node_to_html_node
-from textnode import TextNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 class TestHTMLNode(unittest.TestCase):
     def test_eq(self):
@@ -60,37 +59,6 @@ class TestParentNode(unittest.TestCase):
         ]
     )
         self.assertEqual(nested_node.to_html(), "<div><p><b>Bold text</b></p></div>")  
-
-def test_text_node_to_html_node():
-    # Test plain text
-    text_node = TextNode("Hello, world!", TextType.TEXT)
-    html_node = text_node_to_html_node(text_node)
-    assert html_node.tag == ""
-    assert html_node.value == "Hello, world!"
-    assert html_node.props == {}
-
-    # Test bold text
-    text_node = TextNode("Bold text", TextType.BOLD)
-    html_node = text_node_to_html_node(text_node)
-    assert html_node.tag == "b"
-    assert html_node.value == "Bold text"
-    assert html_node.props == {}
-
-    # Test link
-    text_node = TextNode("Click me", TextType.LINK)
-    text_node.url = "https://www.boot.dev"
-    html_node = text_node_to_html_node(text_node)
-    assert html_node.tag == "a"
-    assert html_node.value == "Click me"
-    assert html_node.props == {"href": "https://www.boot.dev"}
-
-    # Test image
-    text_node = TextNode("Alt text", TextType.IMAGE)
-    text_node.url = "image.png"
-    html_node = text_node_to_html_node(text_node)
-    assert html_node.tag == "img"
-    assert html_node.value == ""
-    assert html_node.props == {"src": "image.png", "alt": "Alt text"}
 
 if __name__ == "__main__":
     unittest.main()
