@@ -1,5 +1,6 @@
 from htmlnode import *
 from textnode import TextType, TextNode
+from markdown_utils import *
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
@@ -30,6 +31,50 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
             else:
                 new_nodes.append(old_node)
             
+    return new_nodes
+
+def split_nodes_link(old_nodes):
+    new_nodes = []
+
+    for old_node in old_nodes:
+        links = extract_markdown_links(old_node.text)
+        if not links:
+            new_nodes.append(old_node)
+            continue
+        
+        link_text, link_url = extract_markdown_links(old_node.text)[0]
+        sections = old_node.text.split(f"[{link_text}]({link_url})", 1)
+
+        if sections[0]:
+            new_nodes.append(TextNode(sections[0], TextType.TEXT))
+
+        new_nodes.append(TextNode(link_text, TextType.LINK, link_url))
+
+        if sections[1]:
+            new_nodes.append(TextNode(sections[1], TextType.TEXT))
+
+    return new_nodes
+
+def split_nodes_image(old_nodes):
+    new_nodes = []
+
+    for old_node in old_nodes:
+        images = extract_markdown_images(old_node.text)
+        if not images:
+            new_nodes.append(old_node)
+            continue
+
+        img_text, img_url = extract_markdown_images(old_node.text)[0]
+        sections = old_node.text.split(f"![{img_text}]({img_url})", 1)
+
+        if sections[0]:
+            new_nodes.append(TextNode(sections[0], TextType.TEXT))
+
+        new_nodes.append(TextNode(img_text, TextType.IMAGE, img_url))
+
+        if sections[1]:
+            new_nodes.append(TextNode(sections[1], TextType.TEXT))
+
     return new_nodes
 
 if __name__ == "__main__":
