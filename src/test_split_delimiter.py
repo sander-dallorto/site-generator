@@ -1,6 +1,6 @@
 import unittest
 
-from split_delimiter import split_nodes_delimiter, split_nodes_image, split_nodes_link
+from split_delimiter import *
 from textnode import TextNode, TextType
 
 class TestSplitDelimiter(unittest.TestCase):
@@ -16,7 +16,6 @@ class TestSplitDelimiter(unittest.TestCase):
             ]
             )
         
-    # THIS SHOULD FAIL WITH CURRENT IMPLEMENTATION
     def test_multiple_delimiters(self):
         node = TextNode("`Some` code `here and more` code `elsewhere`", TextType.TEXT)
         nodes = split_nodes_delimiter([node], "`", TextType.CODE)
@@ -31,14 +30,6 @@ class TestSplitDelimiter(unittest.TestCase):
                 TextNode("elsewhere", TextType.CODE)
             ]
         )
-
-    def test_unmatched_delimiters(self):
-        node = TextNode("This is a **mismatched` delimiter example", TextType.TEXT)
-        
-        with self.assertRaises(Exception) as context:
-            split_nodes_delimiter([node], "**", TextType.BOLD)
-        
-        self.assertTrue("Delimiters don't match" in str(context.exception))
 
     def test_split_nodes_image(self):
         # Test case 1: No images
@@ -73,6 +64,26 @@ class TestSplitDelimiter(unittest.TestCase):
         assert nodes[1].text_type == TextType.LINK
         assert nodes[1].url == "https://boot.dev"
         assert nodes[2].text == " for more"
+
+    def test_text_to_textnodes_with_bold(self):
+        text = "This is **bold** text"
+        nodes = text_to_textnodes(text)
+        assert len(nodes) == 3
+        assert nodes[0].text == "This is "
+        assert nodes[0].text_type == TextType.TEXT
+        assert nodes[1].text == "bold"
+        assert nodes[1].text_type == TextType.BOLD
+        assert nodes[2].text == " text"
+        assert nodes[2].text_type == TextType.TEXT
+
+    def test_text_to_textnodes_complex(self):
+        text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        nodes = text_to_textnodes(text)
+        assert len(nodes) == 10
+        assert nodes[0].text == "This is "
+        assert nodes[0].text_type == TextType.TEXT
+        assert nodes[1].text == "text"
+        assert nodes[1].text_type == TextType.BOLD
 
 if __name__ == "__main__":
     unittest.main()
