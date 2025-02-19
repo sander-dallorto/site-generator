@@ -1,6 +1,6 @@
 import unittest
 
-from markdown_utils import *
+from text_processing import *
 from block_types import BlockType
 
 class TestMarkdownUtils(unittest.TestCase):
@@ -55,7 +55,25 @@ class TestMarkdownUtils(unittest.TestCase):
         # Test paragraphs
         assert block_to_block_type("Just a normal paragraph") == BlockType.PARAGRAPH
 
-
+    def test_markdown_to_html_node(self):
+        # Test paragraph
+        print("Actual output:", markdown_to_html_node("This is a paragraph").to_html())
+        assert markdown_to_html_node("This is a paragraph").to_html() == "<div><p>This is a paragraph</p></div>"
+        
+        # Test heading
+        assert markdown_to_html_node("# Heading").to_html() == "<div><h1>Heading</h1></div>"
+        
+        # Test code block
+        assert markdown_to_html_node("```\ncode block\n```").to_html() == "<div><pre><code>code block</code></pre></div>"
+        
+        # Test blockquote
+        assert markdown_to_html_node("> quote").to_html() == "<div><blockquote>quote</blockquote></div>"
+        
+        # Test unordered list
+        assert markdown_to_html_node("- item 1\n- item 2").to_html() == "<div><ul><li>item 1</li><li>item 2</li></ul></div>"
+        
+        # Test ordered list
+        assert markdown_to_html_node("1. item 1\n2. item 2").to_html() == "<div><ol><li>item 1</li><li>item 2</li></ol></div>"
 
 
 if __name__ == "__main__":

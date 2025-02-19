@@ -4,14 +4,17 @@ class HTMLNode():
     def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag
         self.value = value
-        self.children = children
-        self.props = props
+        self.children = children if children is not None else []
+        self.props = props if props is not None else {}
 
+    def add_child(self, child):
+        self.children.append(child)
+    
     def to_html(self):
         raise NotImplementedError()
     
     def props_to_html(self):
-        if self.props != None:
+        if self.props and len(self.props) > 0:
             props_line = " " + " ".join([f'{key}="{value}"' for key, value in self.props.items()])
             return props_line
         else:
@@ -64,20 +67,5 @@ class ParentNode(HTMLNode):
 
         return f"{opening_tag}{result}</{self.tag}>"
 
-def text_node_to_html_node(text_node):
-    if text_node.text_type == TextType.TEXT:
-        return LeafNode("", text_node.text, {})
-    elif text_node.text_type == TextType.BOLD:    
-        return LeafNode("b", text_node.text, {})
-    elif text_node.text_type == TextType.ITALIC:
-        return LeafNode("i", text_node.text, {})
-    elif text_node.text_type == TextType.CODE:
-        return LeafNode("code", text_node.text, {})
-    elif text_node.text_type == TextType.LINK:
-        return LeafNode("a", text_node.text, {"href": text_node.url})
-    elif text_node.text_type == TextType.IMAGE:
-        return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
-    else:
-        raise Exception("Unknown text type")
 
 
