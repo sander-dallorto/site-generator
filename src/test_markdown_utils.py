@@ -57,7 +57,6 @@ class TestMarkdownUtils(unittest.TestCase):
 
     def test_markdown_to_html_node(self):
         # Test paragraph
-        print("Actual output:", markdown_to_html_node("This is a paragraph").to_html())
         assert markdown_to_html_node("This is a paragraph").to_html() == "<div><p>This is a paragraph</p></div>"
         
         # Test heading
