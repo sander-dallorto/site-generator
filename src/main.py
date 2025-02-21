@@ -5,17 +5,21 @@ from text_processing import *
 from htmlnode import *
 
 def main():
-    node_object = TextNode("This is a text node", TextType.BOLD, "https://www.boot.dev")
-    copy_static_files(src="static", dest="public")
-
     if os.path.exists("public"):
         shutil.rmtree("public")
-
-    shutil.copytree("static", "public")
-
-    generate_page("content/index.md", "template.html", "public/index.html")
-
-    print(node_object)
+    
+    copy_static_files("static", "public")
+    print("Static files copied")
+    
+    generate_pages_recursive("content", "template.html", "public")
+    print("Pages generated")
+    
+    # Add this debug info
+    print("\nChecking generated files:")
+    for root, dirs, files in os.walk("public"):
+        print(f"\nDirectory: {root}")
+        for file in files:
+            print(f"  - {file}")
     
 def copy_static_files(src="static", dest="public"):
     if os.path.exists(dest):
@@ -70,7 +74,9 @@ def generate_page(from_path, template_path, dest_path):
         f.write(template)
 
 def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    print(f"\nProcessing directory: {dir_path_content}")
     entries = os.listdir(dir_path_content)
+    print(f"Found entries: {entries}")
 
     for entry in entries:
         full_path = os.path.join(dir_path_content, entry)
